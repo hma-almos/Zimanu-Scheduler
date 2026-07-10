@@ -1,0 +1,26 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@* <ul class="navbar-nav"> *@
+@if (SignInManager.IsSignedIn(User))
+{
+    <li>
+        <a  class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
+    </li>
+    <li>
+        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button type="submit" class="btn center"><i class="material-symbols-outlined">login</i><p>&emsp;</p><div>تسجيل الخروج</div></button>
+        </form>
+    </li>
+}
+else
+{
+    @* <li> *@
+    @*     <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a> *@
+    @* </li> *@
+    <li>
+        <i class="material-symbols-outlined">login</i><p>&emsp;</p><a asp-area="Identity" asp-page="/Account/Login">تسجيل الدخول</a>
+    </li>
+}
+@* </ul> *@

@@ -1,0 +1,31 @@
+## --- .NET / ASP.NET Core Basics ---
+bin/
+obj/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## --- Secret Management ---
+# Secrets should never be committed to source control
+secrets.json
+appsettings.Production.json
+
+## --- IDE Specifics (Visual Studio / VS Code / Rider) ---
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.VisualState.xml
+
+## --- Frontend & Package Managers (if applicable) ---
+node_modules/
+.npm/
+bower_components/
+
+## --- OS Generated Files ---
+.DS_Store
+Thumbs.db

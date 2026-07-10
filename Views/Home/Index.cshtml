@@ -1,0 +1,82 @@
+﻿@model List<FinalSchedule>
+@{
+    var stages = ViewBag.Stages as List<Stages>;
+    var bridge = ViewBag.Bridge as List<Teacher_Lecture>;
+}
+
+<div class="row">
+    <!-- Main Schedule Table -->
+    <div class="tablecontainer overflow-auto border p-3 align-items-start">
+        @foreach (var stage in stages)
+        {
+            <label class="fs-3">@stage.Name</label>
+            <table class="table custom-table">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <td></td>
+                        <th scope="col" colspan="2">8:30 - 10:30</th>
+                        <th scope="col" colspan="2">10:30 - 12:30</th>
+                        <th scope="col" colspan="2">12:30 - 2:30</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var day in new[] { "sun", "mon", "tue", "wed", "thu" })
+                    {
+                        <tr>
+                            <th scope="row">@day</th>
+
+                            @for (int hour = 1; hour <= 6; hour++)
+                            {
+                                var lectures = Model
+                                .Where(l => l.Stage.Id == stage.Id && l.Day.DayName == day && l.Hours.Hours == hour)
+                                .GroupBy(l => l.Lec.Lecture_Id)  // Group by Lecture_Id to get only unique lectures
+                                .Select(group => group.First())  // Select the first occurrence of each group (unique Lecture_Id)
+                                .ToList();
+
+
+                                if (lectures.Any())
+                                {
+                                    <td>
+
+                                        @foreach (var lectureGroup in lectures)  @* Group by Lecture_Id to ensure unique lectures *@
+                                        {
+
+
+                                            <div class="lecture-group">
+                                                <strong>@lectureGroup.Room.Type @lectureGroup.Room.Name</strong><br />
+                                                <strong>@lectureGroup.Lec.Lecture.Name</strong>  @* Display the lecture name *@
+
+                                                @* Find teachers who teach the same lecture *@
+                                                @{
+
+
+
+                                                    var lectureTeachers = bridge
+                                                    .Where(l => l.Lecture_Id == lectureGroup.Lec.Lecture.Id)  // Filter by the specific Lecture_Id (3 in this case)
+                                                    .Select(l => l.Teacher.Name)    // Select the Teacher's Name
+                                                    .Distinct()                         // Ensure unique teacher names
+                                                    .ToList();
+                                                }
+
+                                                <div>
+                                                    <label class="d-block center text-center">
+                                                        @string.Join(", ", lectureTeachers)  @* Display all teacher names for this lecture *@
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        }
+
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

@@ -1,0 +1,163 @@
+﻿@using WebApplication5.dto
+@{
+    ViewData["Title"] = "Zimanu Scheduler";
+    SaveBulkDataRequest r = ViewBag.saveBlunk;
+}
+@model Teacher_Lecture
+
+<div class="alighn-right d-flex flex-row">
+
+    <div class="modren-form rounded col-lg-6 right alighn-right d-flex flex-column">
+        @for (int i = 0; i < 4; i++)
+        {
+            <div class="col-lg-12">
+                <div class="col-lg-12 m-3">
+                    <h4 class="text-color-1">@r.Stages[i].Name</h4>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div class="col-5 m-3">
+                        <input type="number" class="form-control" id="theoryGroups_@i" placeholder="عدد جروبات العملي">
+                    </div>
+                    <div class="col-5 m-3">
+                        <input type="number" class="form-control" id="practicalGroups_@i" placeholder="عدد جروبات النظري">
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="modren-form rounded p-3 m-2 alighn-right col-lg-6">
+        <div class="m-3 text-color-1 center"><h2 id="stageLabel">@r.Stages[0].Name</h2></div>
+        <label class="fs-3" id="subjectLabel">@r.Subjects[0].Name</label>
+
+        <div class="col-lg-6 right">
+            <div class="radio-group">
+                <input type="checkbox" id="theoryCheckbox"> <span class="fs-5 text-color-1">نظري</span>
+                <input type="checkbox" id="practicalCheckbox"> <span class="text-color-1 fs-5">عملي</span>
+            </div>
+        </div>
+
+        <label class="fs-5">تدريسي المادة</label>
+        <div class="col-lg-11 right d-flex flex-column" id="teacherContainer">
+            @for (int i = 0; i < 4; i++)
+            {
+                <select class="form-select form-select-sm teacherSelect">
+                    <option value="">اختر تدريسي</option>
+                    @foreach (var teacher in r.Teachers)
+                    {
+                        <option value="@teacher.Id">@teacher.Name</option>
+                    }
+                </select>
+            }
+        </div>
+
+        <button id="sb" class="col-5 mx-3" onclick="nextSubject()">المادة التالية</button>
+        <button class="col-lg-5 mx-3" id="prevButton" onclick="goBack()">السابق</button>
+    </div>
+</div>
+
+<script>
+    let subjects = @Html.Raw(Json.Serialize(r.Subjects));
+    let stages = @Html.Raw(Json.Serialize(r.Stages));
+    let selectedData = [];
+    let currentSubjectIndex = 0;
+
+    function nextSubject() {
+        let isTheory = document.getElementById("theoryCheckbox").checked;
+        let isPractical = document.getElementById("practicalCheckbox").checked;
+        if(isTheory||isPractical){
+        let selectedTeachers = [];
+        document.querySelectorAll(".teacherSelect").forEach(select => {
+            if (select.value) selectedTeachers.push(Number(select.value));
+        });
+
+        if (selectedTeachers.length > 0) {
+            selectedData.push({
+                SubjectId:Number (subjects[currentSubjectIndex].id),
+                TeacherIds:selectedTeachers,
+                theory: isTheory,
+                practical: isPractical
+            });
+        }
+
+        currentSubjectIndex++;
+
+        if (currentSubjectIndex < subjects.length) {
+            let nextSubject = subjects[currentSubjectIndex];
+
+
+            if (nextSubject.stages !== subjects[currentSubjectIndex - 1].stages) {
+                document.getElementById("stageLabel").innerText = stages.find(s => s.id === nextSubject.stages)?.name || "Unknown Stage";
+            }
+            document.getElementById("subjectLabel").innerText = nextSubject.name;
+            document.querySelectorAll(".teacherSelect").forEach(select => select.value = "");
+            resetSelections()
+        } else {
+            document.getElementById('sb').style.display = 'none';
+            document.getElementById('prevButton').style.display = 'none';
+            submitData();
+        }
+        }else{
+            alert("اختر نظري او عملي رجائا")
+        }
+    }
+        function resetSelections() {
+        // Uncheck checkboxes
+        document.getElementById("theoryCheckbox").checked = false;
+        document.getElementById("practicalCheckbox").checked = false;
+
+        // Reset all select elements to the default option
+        document.querySelectorAll("select").forEach(select => {
+            select.selectedIndex = 0; // Select the first option
+        });
+    }
+        function goBack() {
+        if (currentSubjectIndex > 0) {
+            selectedData.pop(); // Remove the last added subject
+            currentSubjectIndex--; // Move back to the previous subject
+            updateUI(); // Update the UI with the previous subject
+        }
+
+        // toggleButtons();
+    }
+        function updateUI() {
+        let subject = subjects[currentSubjectIndex];
+        document.getElementById("subjectLabel").innerText = subject.name;
+
+        let stageName = stages.find(s => s.id === subject.stages)?.name || "Unknown Stage";
+        document.getElementById("stageLabel").innerText = stageName;
+    }
+
+    function toggleButtons() {
+        document.getElementById("prevButton").style.display = currentSubjectIndex === 0 ? "none" : "inline-block";
+    }
+    function submitData() {
+        const inputValues = [];
+
+       let stages = @Html.Raw(Json.Serialize(r.Stages));
+
+    // Loop over the stages array in JavaScript
+        for (let i = 0; i < stages.length; i++) {
+            let input1 = document.getElementById("theoryGroups_"+i);
+            let input2 = document.getElementById("practicalGroups_"+i);
+            if (input1) {// Push the value (or 0 if it's not a valid number)
+                inputValues.push(Number(input1.value) || 0);
+            }
+            if (input2) {
+                inputValues.push(Number(input2.value) || 0);
+            }
+        }
+       const dataToSend = {
+        selectedData: selectedData,
+        inputValues: inputValues
+    };
+        console.log("posted Subject:", { dataToSend });
+               fetch('/Home/Create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataToSend)
+    })
+    .then(response => response.json())
+    .then(data => console.log("Response:", data))
+    .catch(error => console.error("Error:", error));
+    }
+</script>

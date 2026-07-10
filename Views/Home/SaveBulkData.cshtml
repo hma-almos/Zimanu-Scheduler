@@ -1,0 +1,251 @@
+﻿@using WebApplication5.dto;
+@{
+    ViewData["Title"] = "Bulk Insert";
+    SaveBulkDataRequest saveBulkDataRequest = ViewBag.Data;
+    List<Lecture> les = new List<Lecture>();
+    List<Teacher> teachers = new List<Teacher>();
+    int lab = 0;
+    int room = 0;
+    int time = 0;
+    if (saveBulkDataRequest != null)
+    {
+        if (saveBulkDataRequest.Subjects.Any())
+            les = saveBulkDataRequest.Subjects;
+
+        if (saveBulkDataRequest.Teachers.Any())
+            teachers = saveBulkDataRequest.Teachers;
+
+        if (saveBulkDataRequest.Rooms.Any())
+        {
+            lab = saveBulkDataRequest.Rooms.Where(lab => lab.Type == "LAB").Count();
+            room = saveBulkDataRequest.Rooms.Where(room => room.Type == "ROOM").Count();
+        }
+
+        if (saveBulkDataRequest.Time.Any())
+            time = saveBulkDataRequest.Time.Count();
+    }
+}
+@* <div class="col-lg-9"> *@
+@* <div class="row"> *@
+
+@*     <div class="col-4 border p-3 align-items-start rounded"> *@
+@*         <div class="col-12"> *@
+@*             <label>عدد القاعات</label> *@
+@*             <input type="number" name="name" class="form-control" value  ="" /> *@
+@*         </div> *@
+@*         <div class="col-12"> *@
+@*             <label>عدد المختبرات</label> *@
+@*             <input type="number" name="name" class="form-control" value="" /> *@
+@*         </div> *@
+@*         <div class="col-12"> *@
+@*             <label>عدد المراحل</label> *@
+@*             <input type="number" name="name" class="form-control" value="" /> *@
+@*         </div> *@
+@*     </div> *@
+@*  </div> *@
+
+<div class="row">
+
+    <div class="tablecontainer overflow-auto overflow-y-auto border p-3 d-flex flex-row">
+        <!-- First Table -->
+
+        <div class="col-lg-4">
+            <div>
+                <div class="m-1 p-2">
+                    <input type="number" class="form-control m-3" id="time" placeholder="كم عدد ساعات الدوام؟" value="@time">
+
+                    <button type="button" class="btn btn-primary col-12 buttton1" onclick="addRow('dataTableBody1')">Add Row</button>
+                    @* <button type="button" class="btn btn-primary" onclick="addRow()">Add Row</button> *@
+                    @* <button type="button" class="btn btn-success" onclick="submitData()">Submit</button> *@
+                    @* <div class="tablecontainer overflow-auto border p-3"> *@
+                    <div class="table-wrapper p-2">
+                        <table class="custom-table w-100">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Teacher</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataTableBody1">
+                                @foreach (var x in teachers)
+                                {
+                                    <tr>
+                                        <td class="row-number">@x.Id</td>
+                                        <td><input type="text" class="custom-input w-100" placeholder="Enter teacher" value="@x.Name"></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    @* </div> *@
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <button type="button" class="btn btn-success buttton2 col-lg-12" onclick="submitData()">Submit</button>
+            </div>
+        </div>
+
+        <!-- Second Table -->
+        <div class="col-lg-8">
+            <div class="m-1 p-2">
+                @* <button type="button" class="btn btn-primary" onclick="addRow()">Add Row</button> *@
+                @* <button type="button" class="btn btn-success" onclick="submitData()">Submit</button> *@
+                <div class="col-lg-5 d-flex flex-row">
+                    <input type="number" class="form-control m-3 col-lg-3 inline" id="labs" placeholder="كم عدد مختبرات العملي في قسمك؟" value="@lab">
+                    <input type="number" class="form-control m-3 col-lg-3 inline" id="rooms" placeholder="كم عدد قاعات النظري في قسمك؟" value="@room">
+                </div>
+                <button type="button" class="btn btn-primary col-12 buttton1" onclick="addRow('dataTableBody2')">Add Row</button>
+                @* <button type="button" class="btn btn-success" onclick="submitData()">Submit</button> *@
+                @* <div class="tablecontainer overflow-auto border p-3"> *@
+                <div class="table-wrapper p-2">
+                    <table class="custom-table w-100">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>subjects</th>
+                                <th>subject time</th>
+                                <th>subject stage</th>
+                                <th>Room num</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody2">
+                            @foreach (var x in les)
+                            {
+                                <tr>
+                                    <td class="row-number">@x.Id</td>
+                                    <td><input type="text" class="custom-input w-100" placeholder="Enter subject" value="@x.Name"></td>
+                                    <td><input type="number" class="custom-input w-100" placeholder="how many hours" value="@x.hours"></td>
+                                    <td><input type="number" class="custom-input w-100" placeholder="Enter stage" value="@x.Stages"></td>
+                                    <td><input type="number" class="custom-input w-100" placeholder="if there any speceil room" value="@x.Room"></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                @* </div> *@
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@* </div> *@
+
+<script>
+    function addRow(tableId) {
+        var tableBody = document.getElementById(tableId);
+        var rowCount = tableBody.rows.length + 1; // Get current count
+
+        if (tableId === "dataTableBody1") {
+            var newRow = `
+                <tr>
+                    <td class="row-number">${rowCount}</td>
+                    <td><input type="text" class="custom-input w-100" placeholder="Enter teacher"></td>
+                </tr>`;
+        } else if (tableId === "dataTableBody2") {
+            var newRow = `
+                <tr>
+                    <td class="row-number">${rowCount}</td>
+                    <td><input type="text" class="custom-input w-100" placeholder="Enter subject"></td>
+                    <td><input type="number" class="custom-input w-100" placeholder="how many hours"></td>
+                    <td><input type="number" class="custom-input w-100" placeholder="Enter stage"></td>
+                    <td><input type="number" class="custom-input w-100" placeholder="Room num"></td>
+                </tr>`;
+        }
+
+        tableBody.insertAdjacentHTML("beforeend", newRow);
+
+        // Auto-scroll to the bottom when a new row is added
+        let tableContainer = tableBody.closest(".tablecontainer");
+        tableContainer.scrollTop = tableContainer.scrollHeight;
+    }
+
+       function submitData() {
+            let table1 = document.getElementById("dataTableBody1");
+            let table2 = document.getElementById("dataTableBody2");
+            let labs=document.getElementById("labs")
+            let room=document.getElementById("rooms")
+            let time=document.getElementById("time")
+
+        // Create data objects from table data
+        let data1 = getTableData(table1, ["Name"]);
+        let data2 = getTableData(table2, ["Name","hours", "stages", "room"]);
+            data2.forEach(item => {
+        item.room = item.room && item.room.trim() !== "" ? item.room : "-1";
+    });
+
+
+        let stages = [], rooms = [], hours = [];
+        let maxStage = Math.max(...data2.map(item => Number(item.stages)));
+        let totalRooms = Number(room.value);
+        let totalLabs = Number(labs.value);
+        let totalHours = Number(time.value);
+
+
+        let maxIterations = Math.max(maxStage, totalRooms, totalLabs, totalHours);
+
+        for (let i = 1; i <= maxIterations; i++) {
+            if (i <= maxStage) {
+                stages.push({ name: `stage : ${i}` });
+            }
+            if (i <= totalRooms) {
+                rooms.push({ name: i.toString(), type: "ROOM" });
+            }
+            if (i <= totalLabs) {
+                rooms.push({ name: i.toString(), type: "LAB" });
+            }
+            if (i <= totalHours) {
+                hours.push({ Hours: i });
+            }
+        }
+        console.log("Table 1 Data:", data1);
+        console.log("Table 2 Data:", data2);
+
+        // The object to send in the POST request
+        let payload = {
+            Teachers: data1,  // Array of teacher objects
+            Subjects: data2,   // Array of subject objects
+            stages: stages,
+            rooms:  rooms,
+            time:  hours
+        };
+        console.log("payload:", payload);
+                fetch('/Home/SaveBulkData', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.json()) // Parse response as JSON
+    .then(data => {
+        if (data.redirectUrl) {
+            window.location.href = data.redirectUrl;  // Redirect manually
+        } else {
+            alert("Data saved successfully!");
+        }
+    })
+    .catch(error => console.error("Error:", error));
+        }
+
+        function getTableData(table, columns) {
+        let rows = table.getElementsByTagName("tr");
+        let data = [];
+
+        for (let i = 0; i < rows.length; i++) {
+            let inputs = rows[i].getElementsByTagName("input");
+            let rowData = {};
+            let isEmpty = true; // Flag to check if the row is empty
+
+            columns.forEach((col, index) => {
+                let value = inputs[index] ? inputs[index].value.trim() : "";
+                rowData[col] = value;
+                if (value !== "") isEmpty = false; // If any value is non-empty, mark as not empty
+            });
+
+            if (!isEmpty) {
+                data.push(rowData);
+            }
+        }
+
+        return data;
+    }
+</script>

@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zimanu Scheduler</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/myStyle.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Lectures.styles.css" asp-append-version="true" />
+    @* font *@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=login" />
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=rebase" />
+    
+</head>
+<body class="back-ground-color1">
+
+    <div class="sidebar col-lg-2">
+        <h2 class="collage-Title">كلية تكنولوجيا المعلومات</h2>
+        <hr>
+        <ul>
+            @* <li id="departmentChosse" onclick="showPopop()"><i class="fas fa-chevron-left"></i> قسم البرمجيات</li> *@
+            <li><i class="fas fa-home"></i> <p>&emsp;</p><a asp-controller="Home" asp-action="Index">الصفحة الرئيسية</a></li>
+            <li><i class="fa-solid fa-cloud-arrow-up"></i><p>&emsp;</p> <a asp-controller="Home" asp-action="Create">ادخال البيانات</a></li>
+            <li><i class="material-symbols-outlined">rebase</i> <p>&emsp;</p><a asp-controller="Home" asp-action="GenerateSchedule">توليد جدول</a></li>
+            <li><i class="material-icons">create</i><p>&emsp;</p><a asp-controller="Home" asp-action="SaveBulkData">تعديل البيانات</a></li>
+            <partial name="_LoginPartial" />
+        </ul>
+    </div>
+    <div>
+        <h1 class="m-5 title">Zimanu Scheduler</h1>
+        <main role="main" class="p-5">
+            <div class="col-lg-9">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+
+    @* <footer class="border-top footer text-muted"> *@
+    @*     <div class="container"> *@
+    @*         &copy; 2025 - Lectures - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> *@
+    @*     </div> *@
+    @* </footer> *@
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
